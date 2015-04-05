@@ -230,7 +230,7 @@ d3.gantt = function() {
 		if (!arguments.length)
 			return parent;
 		parent = value;
-		var pelt = d3.select(parent).node(); console.log("pp " + pelt);
+		var pelt = d3.select(parent).node(); 
 		if (pelt == null)
 			console.log("d3.gantt.parent you gave cant be found: " + value);
 		width = pelt.getBoundingClientRect().width - margin.left - margin.right-5;
