@@ -19,7 +19,6 @@ function make_gantt_data() {
 					else
 						d.status = "SUCCEEDED";
 					gantt.changeStatus(d.taskName, d.status);
-					gantt(tasks);
 				}
 			});
 		if (taskNames.indexOf(dsd[i][0]) === -1) {
