@@ -12,7 +12,15 @@ function make_gantt_data() {
 			    "endDate": new Date(ddash(dsd[i][2])), 
 			    "taskName": dsd[i][0], 
 			    "status": "RUNNING",
-				"onclick": function(d) { console.log("You clicked: " + JSON.stringify(d)); }
+				"onclick": function(d) { 
+					console.log("You clicked: " + JSON.stringify(d));
+					if (d.status == "SUCCEEDED")
+						d.status = "RUNNING";
+					else
+						d.status = "SUCCEEDED";
+					gantt.changeStatus(d.taskName, d.status);
+					gantt(tasks);
+				}
 			});
 		if (taskNames.indexOf(dsd[i][0]) === -1) {
 			taskNames.push(dsd[i][0]);
