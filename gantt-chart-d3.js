@@ -10,7 +10,7 @@ d3.gantt = function() {
     var margin = {
 	top : 20,
 	right : 40,
-	bottom : 40, //XXX
+	bottom : 40, // TODO base this on rotation angle of x axis
 	left : 150
     };
     var timeDomainStart = d3.time.day.offset(new Date(),-3);
@@ -18,11 +18,11 @@ d3.gantt = function() {
     var timeDomainMode = FIT_TIME_DOMAIN_MODE;// fixed or fit
     var taskTypes = [];
     var taskStatus = [];
-    var parent = "body"; // XXX
+    var parent = "body";
     var height = document.body.clientHeight - margin.top - margin.bottom-5;
     var width = document.body.clientWidth - margin.right - margin.left-5;
-	if (height < 100) height = 500; // XXX
-	if (width < 100 ) width = 500; // XXX
+	if (height < 100) height = 500;
+	if (width < 100 ) width = 500;
 	
     var tickFormat = "%H:%M";
 
@@ -75,33 +75,34 @@ d3.gantt = function() {
 		initTimeDomain(tasks);
 		initAxis();
 
-		var svg = d3.select(parent) // XXX
+		var svg = d3.select(parent)
 		.append("svg")
-		.attr("class", "chart")
-		.attr("width", width + margin.left + margin.right)
-		.attr("height", height + margin.top + margin.bottom)
-		.append("g")
-	        .attr("class", "gantt-chart")
-		.attr("width", width + margin.left + margin.right)
-		.attr("height", height + margin.top + margin.bottom)
-		.attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
-		
+			.attr("class", "chart")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+			.append("g")
+		        .attr("class", "gantt-chart")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+				.attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
+			
 	    svg.selectAll(".chart")
 		 .data(tasks, keyFunction).enter()
 		 .append("rect")
-		 .attr("rx", 5)
-	         .attr("ry", 5)
-		 .attr("class", function(d){ 
-		     if(taskStatus[d.status] == null){ return "bar";}
-		     return taskStatus[d.status];
-		     }) 
-		 .attr("y", 0)
-		 .attr("transform", rectTransform)
-		 .attr("height", function(d) { return y.rangeBand(); })
-		 .attr("width", function(d) { 
-		     return (x(d.endDate) - x(d.startDate)); 
-		     })
-		 .on("click", function(d) { d.onclick(d); } );
+		 	 .attr("id", function(d) { return d.taskName; }) 
+			 .attr("rx", 5)
+		     .attr("ry", 5)
+			 .attr("class", function(d){ 
+			     if(taskStatus[d.status] == null){ return "bar";}
+			     return taskStatus[d.status];
+			     }) 
+			 .attr("y", 0)
+			 .attr("transform", rectTransform)
+			 .attr("height", function(d) { return y.rangeBand(); })
+			 .attr("width", function(d) { 
+			     return (x(d.endDate) - x(d.startDate)); 
+			     })
+			 .on("click", function(d) { d.onclick(d); } );
 		 
 		 
 		 svg.append("g")
@@ -109,7 +110,7 @@ d3.gantt = function() {
 		 .attr("transform", "translate(0, " + (height - margin.top - margin.bottom) + ")")
 		 .transition()
 		 .call(xAxis)
-		  .selectAll("text")   // XXX
+		  .selectAll("text")   // TODO make configurable
             .style("text-anchor", "end")
             .attr("dx", "-.8em")
             .attr("dy", ".15em")
@@ -122,6 +123,17 @@ d3.gantt = function() {
 		 
 		 return gantt;
 
+    };
+    
+    gantt.changeStatus = function(id, status) {
+    	var svg = d3.select(parent).select("svg");
+		var el = svg.select("#"+id);
+		el
+    	   .attr("class", function(d) {
+    	   		if(taskStatus[status] == null){ return "bar";}
+			    return taskStatus[status];
+    	   		console.log("in " + d + " " + status);
+    	   });
     };
     
     gantt.redraw = function(tasks) {
@@ -226,7 +238,7 @@ d3.gantt = function() {
 		return gantt;
     };
 
-	gantt.parent = function(value) { // XXX
+	gantt.parent = function(value) {
 		if (!arguments.length)
 			return parent;
 		parent = value;
